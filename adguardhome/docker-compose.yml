@@ -36,9 +36,13 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "68:68/tcp"
-      - "68:68/udp"
+      #- "68:68/tcp"
+      #- "68:68/udp"
       - "853:853/tcp"
+      # For setup interface, 3000 already in use
+      - "3030:3000"
+      # For web interface, 80 already in use
+      - "8090:80"
     volumes:
       - ./adguardhome/work:/opt/adguardhome/work
       - ./adguardhome/conf:/opt/adguardhome/conf
