@@ -23,9 +23,13 @@ services:
       - --certificatesresolvers.myresolver.acme.caserver=${LETS_ENCRYPT_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
       - --certificatesresolvers.myresolver.acme.email=${LETS_ENCRYPT_EMAIL}
       - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      # Enable Web UI
+      # - --api.insecure=true
     ports:
       - "80:80"
       - "443:443"
+      # Web UI
+      # - "8082:8080"
     volumes:
       - ${CONFIG_ROOT:-.}/letsencrypt:/letsencrypt
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -42,6 +46,8 @@ services:
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
+    ports:
+      - "8989:8989"
     volumes:
       - ${CONFIG_ROOT:-.}/sonarr:/config
       - ${DATA_ROOT}:/data
@@ -72,6 +78,8 @@ services:
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
+    ports:
+      - "7878:7878"
     volumes:
       - ${CONFIG_ROOT:-.}/radarr:/config
       - ${DATA_ROOT}:/data
@@ -102,6 +110,8 @@ services:
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
+    ports:
+      - "8686:8686"
     volumes:
       - ${CONFIG_ROOT:-.}/lidarr:/config
       - ${DATA_ROOT}:/data
@@ -134,6 +144,8 @@ services:
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
+    ports:
+      - "6767:6767"
     volumes:
       - ${CONFIG_ROOT:-.}/bazarr/config:/config
       - ${DATA_ROOT}:/data
@@ -164,6 +176,8 @@ services:
     environment:
       - LOG_LEVEL=debug
       - TZ=${TIMEZONE}
+    ports:
+      - "5055:5055"
     volumes:
       - ${CONFIG_ROOT:-.}/seerr:/app/config
     restart: always
@@ -195,6 +209,8 @@ services:
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
+    ports:
+      - "9696:9696"
     volumes:
       - ${CONFIG_ROOT:-.}/prowlarr:/config
     restart: always
@@ -226,6 +242,8 @@ services:
       - LOG_HTML=${LOG_HTML:-false}
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
       - TZ=${TIMEZONE}
+    ports:
+      - "8191:8191"
     labels:
       - traefik.enable=true
       - traefik.http.routers.flaresolverr.rule=PathPrefix(`/flaresolverr`)
@@ -314,6 +332,8 @@ services:
   vpn:
     image: ghcr.io/thrnz/docker-wireguard-pia:latest
     container_name: vpn
+    ports:
+      - "8080:8080"
     volumes:
       - ${CONFIG_ROOT:-.}/pia:/pia
       - ${CONFIG_ROOT:-.}/pia-shared:/pia-shared
@@ -353,6 +373,8 @@ services:
   unpackerr:
     image: ghcr.io/unpackerr/unpackerr:latest
     container_name: unpackerr
+    ports:
+      - "5656:5656"
     volumes:
       - ${DOWNLOAD_ROOT}:/data/torrents
     restart: always
@@ -411,6 +433,8 @@ services:
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
+    ports:
+      - "8081:8080"
     volumes:
       - ${CONFIG_ROOT:-.}/sabnzbd:/config
       - ${DATA_ROOT}:/data
@@ -446,6 +470,7 @@ services:
     ports:
       - "7359:7359/udp"
       - "1900:1900/udp"
+      - "8096:8096/tcp"
     restart: always
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://127.0.0.1:8096/jellyfin/health"]
@@ -513,7 +538,9 @@ services:
       - HOMEPAGE_VAR_WEATHER_LONG=${HOMEPAGE_VAR_WEATHER_LONG}
       - HOMEPAGE_VAR_WEATHER_TIME=${TIMEZONE}
       - HOMEPAGE_VAR_WEATHER_UNIT=${HOMEPAGE_VAR_WEATHER_UNIT}
-      - HOMEPAGE_ALLOWED_HOSTS=${HOSTNAME}
+      - HOMEPAGE_ALLOWED_HOSTS=*
+    ports:
+      - "3000:3000"
     volumes:
       - ${CONFIG_ROOT:-.}/homepage:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
