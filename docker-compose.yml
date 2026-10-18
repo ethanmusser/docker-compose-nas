@@ -570,6 +570,19 @@ services:
       - AUTOHEAL_CONTAINER_LABEL=all
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  uhf-server:
+    image: swapplications/uhf-server:2.0.0
+    container_name: uhf-server
+    restart: unless-stopped
+    ports:
+      - "${UHF_SERVER_PORT:-8000}:${UHF_SERVER_PORT:-8000}"
+    volumes:
+      - ${DATA_ROOT}/media/dvr/uhf-recordings:/recordings
+      - ./uhf/database:/var/lib/uhf-server
+    environment:
+      - PORT=${UHF_SERVER_PORT:-8000}
+      - PASSWORD=${UHF_SERVER_PASSWORD:-} # Optional password protection
+    command: uhf-server --port ${UHF_SERVER_PORT:-8000} --recordings-dir /recordings ${UHF_SERVER_PASSWORD:+--password ${UHF_SERVER_PASSWORD}} --enable-commercial-detection
 
 networks:
   default:
